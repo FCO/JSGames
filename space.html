@@ -1,0 +1,85 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <script src="./gameFisics.js"></script>
+    <script>
+      var screen                   = new Screen(document.body);
+      screen.color                 = "000000";
+      screen.width                 = 800;
+      screen.height                = 500;
+      screen.dom.style.border      = "solid 1px black";
+
+      var ship                     = screen.createElement("Poligon");
+      ship.color                   = "FFFFFF";
+      ship.solid                   = true;
+      ship.circular_space          = true;
+      ship.x                       = screen.width / 2;
+      ship.y                       = screen.height / 2;
+      ship.add_vertice(0, -80);
+      ship.add_vertice(-30, -50);
+      ship.add_vertice(-40, 50);
+      ship.add_vertice(40, 50);
+      ship.add_vertice(30, -50);
+      //ship.draw_colision_area        = true;
+      ship.draw_center_point         = true;
+
+      ship.direction               = new Velocity();
+      ship.on_move                 = function(){
+         if(this.center.x <= 0){
+            this.x = screen.width;
+         } else if(this.center.x >= screen.width){
+            this.x = 0;
+         }
+         if(this.center.y <= 0){
+            this.y = screen.height;
+         } else if(this.center.y >= screen.height){
+            this.y = 0;
+         }
+      };
+
+      var laser                     = screen.createElement("Poligon");
+      //laser.visible                 = false;
+      laser.color                   = "FFFF00";
+      laser.solid                   = false;
+      laser.circular_space          = true;
+      laser.x                       = ship.center.x
+      laser.y                       = ship.center.y - ship.height / 2;
+      laser.add_vertice(0, 0);
+      laser.add_vertice(0, -10);
+
+      laser.ship           = ship;
+      laser.start_velocity = new Velocity(0, -3);
+
+laser.clone().velocity.y = 1;;
+
+      document.onkeypress = function(event) {
+         if(event.keyCode == 38) {
+            ship.direction.mod = -1;
+            ship.velocity.add(ship.direction);
+            ship.direction.mod = 0;
+         }
+         else if(event.keyCode == 39) {
+            ship.direction.ang -= Math.PI / 45;
+            ship.rotate(-1 * Math.PI / 45);
+         }
+         else if(event.keyCode == 37) {
+            ship.direction.ang += Math.PI / 45;
+            ship.rotate(Math.PI / 45);
+         }
+         else if(event.keyCode == 0) {
+            var tmp = laser.clone();
+tmp.x += 10;
+console.log(tmp);
+            tmp.visible = true;
+            tmp.velocity = tmp.start_velocity;
+         }
+         else {
+            alert("keyCode pressed: " + event.keyCode);
+         }
+      }
+
+      screen.run();
+    </script>
+  </body>
+</html>
