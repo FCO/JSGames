@@ -22,6 +22,12 @@ function Screen(container, pars) {
 }
 
 Screen.prototype = {
+	createAudioQueue:	function(url, map, size){
+		this.audioQueue = new AudioQueue(url, map, size);
+	},
+	play:	function(track) {
+		this.audioQueue.play(track);
+	},
 	log:	function(msg){console.log(msg);},
 	draw:	function(element) {
 		this.log("screen.draw: " + element);
@@ -139,5 +145,56 @@ ScreenGenericElement.prototype = {
 				}
 			}
 		}
+	},
+};
+function AudioQueue(url, map, max) {
+	this.max		= !!max ? max : 10;
+	this.url		= url;
+	this.samples		= map;
+	this.onloadeddata	= function(){};
+	this.onloadedsingledata	= function(){};
+	this.createQueue();
+}
+
+AudioQueue.get_instance = function() {
+	if(!AudioQueue.instance)
+		AudioQueue.instance = new AudioQueue();
+	return AudioQueue.instance;
+}
+
+AudioQueue.prototype = {
+	loadevents: 0,
+	setSamplesTable:	function(table) {
+		this.samples = table;
+	},
+	play:		function(name) {
+		var audio = this.getAudio();
+		audio.currentTime = this.samples[name].start;
+		audio.setAttribute("endAt", this.samples[name].end);
+		audio.play();
+	},
+	createQueue:	function() {
+		this.queue = [];
+		for(var i = 0; i < this.max; i++) {
+			var tmp = this.createAudio();
+			this.queue.push(tmp);
+		}
+	},
+	createAudio:	function() {
+		var tmp = new Audio;
+		tmp.setAttribute("autoload", true);
+		tmp.setAttribute("src", this.url);
+		tmp.load();
+		tmp.addEventListener('timeupdate', function() {
+			if(this.currentTime >= this.getAttribute("endAt"))
+				this.pause();
+		});
+		return tmp;
+	},
+	getAudio:	function() {
+		var actual = this.queue.shift();
+		this.queue.push(actual);
+		actual.pause();
+		return actual;
 	},
 };
