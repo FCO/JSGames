@@ -22,7 +22,12 @@ World.prototype = {
         sendCmd:        function(cmd, pars) {
                 var command = {};
                 command[cmd] = pars;
-                self.postMessage(command);
+                try{
+			self.postMessage(command);
+		} catch(e) {
+			this.log("ERROR: sending cmd: " + cmd);
+			//this.log("ERROR: sending message: {" + cmd + ": " + JSON.stringify(command) + "}");
+		}
         },
         log:    function(msg) {
                 this.sendCmd("log", [msg]);
@@ -50,10 +55,11 @@ World.prototype = {
 	},
 	createElement:	function() {
 		var element = this.factory.createElement.apply(this.factory, arguments);
-		this.sendCmd("createGenericElement", [element.eid]);
+		this.element(element.eid, {sendUpdate: []});
 	},
 	element:	function(eid, data) {
 		this.log("element: " + eid + ", " + JSON.stringify(data));
+		this.log(this.factory.elements_by_id);
 		var element = this.factory.getElementById(eid);
 		for(var cmd in data) {
 			this.log("element: CMD: " + cmd);

@@ -9,7 +9,7 @@ function Screen(container, pars) {
 	this.elements	= [];
 	for(var attr in pars)
 		this.canvas.setAttribute(attr, pars[attr]);
-	this.worker		= new Worker("Worker.js");
+	this.worker		= new Worker("Worker.js" + "?" + Math.random());
 	var _this 		= this;
 	this.worker.onmessage	= function(event){
 		var msg = event.data;
@@ -76,21 +76,23 @@ Screen.prototype = {
 		this.sendCmd("callDraw");
 	},
 	createElement:	function() {
-		var args = [];
+		var generic = this.createGenericElement();
+		var args = [generic.eid];
 		for(var i = 0; i < arguments.length; i++)
 			args.push(arguments[i]);
 		this.sendCmd("createElement", args);
+		return generic;
 	},
-	createGenericElement:	function(eid) {
-		var new_element = new ScreenGenericElement(eid);
+	createGenericElement:	function() {
+		var new_element = new ScreenGenericElement();
 		new_element.__screen = this;
-		this.elements_by_id[eid] = new_element;
-		this.lastElement = new_element;
-		new_element.__sendUpdate();
+		this.elements_by_id[new_element.eid] = new_element;
+		return new_element;
 	},
 	updateGenericElement:	function(eid, data) {
 		this.log("eid: " + eid);
-		this.elements_by_id[eid].__update_data(data);
+		if(this.elements_by_id[eid])
+			this.elements_by_id[eid].__update_data(data);
 	},
 	getLastElement:	function() {
 		var tmp = this.lastElement;
@@ -104,18 +106,21 @@ Screen.prototype = {
 	},
 };
 
-function ScreenGenericElement(eid) {
-	this.eid = eid;
+function ScreenGenericElement() {
+	this.eid = ScreenGenericElement.last_eid++;
 }
+
+ScreenGenericElement.last_eid = 0;
 
 ScreenGenericElement.prototype = {
 	__sendCmd: function(cmd, pars) {
 		if(!this.__screen) throw "First, please set '__screen'.";
+		pars.unshift(this.eid);
 		this.__screen.sendCmd(cmd, pars);
 	},
 	__real_values:	{},
 	__sendUpdate:	function() {
-		this.__sendCmd("element", [this.eid, {sendUpdate: []}]);
+		this.__sendCmd("element", [{sendUpdate: []}]);
 	},
 	__update_data:	function(data) {
 		this.__screen.log("update_data()");
@@ -130,7 +135,7 @@ ScreenGenericElement.prototype = {
 					var name = key;
 					var val = {};
 					val[name] = [value];
-					this.__sendCmd("element", [this.eid, val]);
+					this.__sendCmd("element", [val]);
 				});
 			} else {
 				this[key] = function() {
@@ -141,12 +146,13 @@ ScreenGenericElement.prototype = {
 					var val = {};
 					console.log(args);
 					val[name] = args;
-					this.__sendCmd("element", [this.eid, val]);
+					this.__sendCmd("element", [val]);
 				}
 			}
 		}
 	},
 };
+
 function AudioQueue(url, map, max) {
 	this.max		= !!max ? max : 10;
 	this.url		= url;

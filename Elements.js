@@ -3,7 +3,7 @@ function ElementFactory() {
 	this.elements_by_id = {};
 }
 
-ElementFactory.eid = 1;
+ElementFactory.last_eid = -1;
 
 ElementFactory.prototype = {
 	getElementById:	function(id) {
@@ -21,27 +21,36 @@ ElementFactory.prototype = {
 		console.log(msg);
 	},
 	createElement:	function() {
-		var args = arguments;
-		type = args[0];
-		args[0] = null;
-		my_args = [];
-		for(var i =1; i < args.length; i++)
-			my_args.push(args[i]);
+		var args	= [];
+		var my_args	= [];
+		var eid		= arguments[0];
+		this.log("eid : " + eid);
+		if(!eid) {
+			eid = ElementFactory.last_eid--;
+		}
+		var type	= arguments[1];
+		this.log("type: " + type);
+		args[0]		= null;
+		for(var i = 2; i < arguments.length; i++) {
+			args.push(arguments[i]);
+			my_args.push(arguments[i]);
+		}
+		this.log("type: " + type);
 		this.log("CreateElement(" + type + ", " + my_args  + ")");
 		var element = new (Function.prototype.bind.apply(eval(type), args));
-		ElementFactory.eid++;
-		element.eid = ElementFactory.eid;
+		element.eid = eid;
 		this.elementBase(element);
 		if(element.init)
 			element.init.apply(element, my_args);
 		this.elements.push(element);
-		this.elements_by_id[element.eid] = element;
+		this.elements_by_id[eid] = element;
 		return element;
 	},
 	elementBase:	function(element) {
 		element.genericFunctions = {
 			sendUpdate:	function() {
 				var data = this.toData.call(this.genericFunctions);
+				//this.sendCmd("updateGenericElement", [this.eid, data]);
 				this.sendCmd("updateGenericElement", [this.eid, data]);
 			},
 			move:	function(x, y) {
@@ -53,7 +62,10 @@ ElementFactory.prototype = {
 				this.sendUpdate();
 			},
 		};
-		element.sendUpdate = function(){this.genericFunctions.sendUpdate.call(this)};
+		//element.sendUpdate = function(){
+		//	if(this.eid >= 0)
+		//		this.genericFunctions.sendUpdate.call(this)
+		//};
 		element.factory	= this;
 		element.world	= this.world;
 		element.sendCmd = function(cmd, data) {this.world.sendCmd(cmd, data)};
@@ -202,10 +214,10 @@ CalcRectangle.prototype = {
 	DR:	null,
 	init:	function(L, R, U, D) {
 		this.factory.log("new newCalcRectangle(" + L + ", " + R + ", " + U + ", " + D + ")");
-		this.UL = this.factory.createElement("Point", U, L);
-		this.UR = this.factory.createElement("Point", U, R);
-		this.DL = this.factory.createElement("Point", D, L);
-		this.DR = this.factory.createElement("Point", D, R);
+		this.UL = new Point(U, L);
+		this.UR = new Point(U, R);
+		this.DL = new Point(D, L);
+		this.DR = new Point(D, R);
 	},
 	path:	function(){
 		return [
