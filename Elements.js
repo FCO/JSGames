@@ -3,8 +3,6 @@ function ElementFactory() {
 	this.elements_by_id = {};
 }
 
-ElementFactory.eid = 1;
-
 ElementFactory.prototype = {
 	getElementById:	function(id) {
 		return this.elements_by_id[id];
@@ -21,16 +19,18 @@ ElementFactory.prototype = {
 		console.log(msg);
 	},
 	createElement:	function() {
-		var args = arguments;
-		type = args[0];
+		var args = [];
+		var eid  = arguments[1];
+		type = arguments[0];
 		args[0] = null;
 		my_args = [];
-		for(var i =1; i < args.length; i++)
-			my_args.push(args[i]);
+		for(var i = 2; i < arguments.length; i++) {
+			args.push(arguments[i]);
+			my_args.push(arguments[i]);
+		}
 		this.log("CreateElement(" + type + ", " + my_args  + ")");
 		var element = new (Function.prototype.bind.apply(eval(type), args));
-		ElementFactory.eid++;
-		element.eid = ElementFactory.eid;
+		element.eid = eid;
 		this.elementBase(element);
 		if(element.init)
 			element.init.apply(element, my_args);

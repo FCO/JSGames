@@ -70,17 +70,20 @@ Screen.prototype = {
 		this.sendCmd("callDraw");
 	},
 	createElement:	function() {
-		var args = [];
+		var tmp = this.createGenericElement();
+		var args = [tmp.eid];
 		for(var i = 0; i < arguments.length; i++)
 			args.push(arguments[i]);
 		this.sendCmd("createElement", args);
+		return tmp;
 	},
-	createGenericElement:	function(eid) {
+	createGenericElement:	function() {
 		var new_element = new ScreenGenericElement(eid);
 		new_element.__screen = this;
 		this.elements_by_id[eid] = new_element;
 		this.lastElement = new_element;
 		new_element.__sendUpdate();
+		return new_element;
 	},
 	updateGenericElement:	function(eid, data) {
 		this.log("eid: " + eid);
@@ -99,8 +102,10 @@ Screen.prototype = {
 };
 
 function ScreenGenericElement(eid) {
-	this.eid = eid;
+	this.eid = ScreenGenericElement.last_eid++;
 }
+
+ScreenGenericElement.last_eid = 0;
 
 ScreenGenericElement.prototype = {
 	__sendCmd: function(cmd, pars) {

@@ -48,9 +48,9 @@ World.prototype = {
 		}
 		this.sendCmd("draw", [hash]);
 	},
-	createElement:	function() {
+	createElement:	function(eid) {
 		var element = this.factory.createElement.apply(this.factory, arguments);
-		this.sendCmd("createGenericElement", [element.eid]);
+		//this.sendCmd("createGenericElement", [element.eid]);
 	},
 	element:	function(eid, data) {
 		this.log("element: " + eid + ", " + JSON.stringify(data));
