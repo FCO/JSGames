@@ -1,14 +1,10 @@
-function ElementFactory(eid) {
-	if(eid) this.eid = eid;
+function ElementFactory(type) {
+	this.type = type;
 }
 
 ElementFactory.last_eid = 0;
 
-ElementFactory.prototype = {
-	
-};
-
-var ElementPrototype = {
+ElementFactory.elementPrototype = {
 	init:	function() {
 		throw "Please, implement the 'init' method.";
 	},
@@ -18,17 +14,18 @@ var ElementPrototype = {
 				this[key] = prototype[key];
 			}
 		}
+		return this;
 	},
 	draw:	function() {
 		throw "Please, implement the 'draw' method.";
 	},
 };
 
-var WorkerElement	= ElementFactory.concat({
+ElementFactory.workerPrototype	= ElementFactory.elementPrototype.concat({
 	init:	function(world) {
 		this.world	= world;
 		this.points	= [];
-	}
+	},
 	path:	function() {
 		var path = [];
 		if(this.points) {
@@ -41,11 +38,32 @@ var WorkerElement	= ElementFactory.concat({
 	},
 });
 
-var ScreenElement	= ElementFactory.concat({
+ElementFactory.screenPrototype	= ElementFactory.elementPrototype.concat({
 	init:	function(screen) {
 		this.screen = screen;
 	},
 });
+
+
+ElementFactory.prototype = {
+	getElementPrototype:	function() {
+		return this.type == "screen" ? ElementFactory.screenPrototype : ElementFactory.workerPrototype;
+	},
+	createElement:	function() {
+		var args        = [];
+		var my_args     = [];
+		var type        = arguments[0];
+		args[0]         = null;
+		for(var i = 2; i < arguments.length; i++) {
+			args.push(arguments[i]);
+			my_args.push(arguments[i]);
+		}
+		var new_element = new (Function.prototype.bind.apply(type, args));
+		new_element.factory = this;
+		new_element.init(my_args);
+		return new_element;
+	},
+};
 
 function Point(x, y) {
 	if(x) this._x = x;
@@ -112,3 +130,12 @@ Point.prototype = {
 		return [this.x, this.y];
 	}
 };
+
+function CalcRectangle(min_x, max_x, min_y, max_y) {
+	this.points = [];
+	this.points.push(new Point(min_x, min_y));
+	this.points.push(new Point(min_x, max_y));
+	this.points.push(new Point(max_x, max_y));
+	this.points.push(new Point(max_x, min_y));
+}
+
