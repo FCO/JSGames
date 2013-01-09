@@ -2,6 +2,7 @@ function ElementFactory(type) {
 	if(type != "screen" && type != "world")
 		throw "The ElementFactory type must be 'screen' or 'world'.";
 	this.type = type;
+	this[type] = eval(type);
 }
 
 ElementFactory.last_eid = 0;
@@ -9,7 +10,12 @@ ElementFactory.last_eid = 0;
 ElementFactory.elementPrototype = {
 	eid:	0,
 	init:	function() {
-		throw "Please, implement the 'init' method.";
+		this[this.type]	= this.factory[type];
+		this.center	= new Point(0, 0);
+		if(this.postInit) this.postInit(arguments);
+	},
+	sendCmd:	function(cmd, attrs) {
+		this[this.type].sendCmd(cmd, attr);
 	},
 	concat:	function(prototype) {
 		var clone = {};
@@ -32,13 +38,12 @@ ElementFactory.elementPrototype = {
 	draw:	function() {
 		throw "Please, implement the 'draw' method.";
 	},
+	move:	function() {
+		throw "Please, implement the 'move' method.";
+	}
 };
 
 ElementFactory.worldPrototype	= ElementFactory.elementPrototype.concat({
-	init:	function(world) {
-		this.world	= world;
-		//this.points	= [];
-	},
 	onWorld:	function(func) {
 		func.call(this);
 	},
@@ -52,12 +57,12 @@ ElementFactory.worldPrototype	= ElementFactory.elementPrototype.concat({
 		}
 		return path;
 	},
+	postInit:	function() {
+		this.sendCmd({createElement: arguments})
+	},
 });
 
 ElementFactory.screenPrototype	= ElementFactory.elementPrototype.concat({
-	init:	function(screen) {
-		this.screen = screen;
-	},
 	onScreen:	function(func) {
 		func.call(this);
 	},
@@ -90,7 +95,7 @@ ElementFactory.prototype = {
 		new_element.eid = eid ? eid : this.getNewEid();
 		new_element.factory = this;
 		args.shift();
-		new_element.init(args);
+		new_element.init(this[this.type]);
 		return new_element;
 	},
 };
