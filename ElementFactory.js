@@ -1,34 +1,50 @@
 function ElementFactory(type) {
+	if(type != "screen" && type != "world")
+		throw "The ElementFactory type must be 'screen' or 'world'.";
 	this.type = type;
 }
 
 ElementFactory.last_eid = 0;
 
 ElementFactory.elementPrototype = {
+	eid:	0,
 	init:	function() {
 		throw "Please, implement the 'init' method.";
 	},
 	concat:	function(prototype) {
-		for(var key in prototype) {
-			if(prototype.hasOwnProperty(key)) {
-				this[key] = prototype[key];
+		var clone = {};
+		if(!prototype)
+			prototype = {};
+		for(var key in this) {
+			if(this.hasOwnProperty(key)) {
+				clone[key] = this[key];
 			}
 		}
-		return this;
+		for(var key in prototype) {
+			if(prototype.hasOwnProperty(key)) {
+				clone[key] = prototype[key];
+			}
+		}
+		return clone;
 	},
+	onScreen:	function(func) {},
+	onWorld:	function(func) {},
 	draw:	function() {
 		throw "Please, implement the 'draw' method.";
 	},
 };
 
-ElementFactory.workerPrototype	= ElementFactory.elementPrototype.concat({
+ElementFactory.worldPrototype	= ElementFactory.elementPrototype.concat({
 	init:	function(world) {
 		this.world	= world;
-		this.points	= [];
+		//this.points	= [];
+	},
+	onWorld:	function(func) {
+		func.call(this);
 	},
 	path:	function() {
 		var path = [];
-		if(this.points) {
+		if(this.points && this.points.length > 0) {
 			path.push({moveTo: this.points[0].toArray()});
 			for(var i = 0; i < this.points.length; i++) {
 				path.push({lineTo: this.points[i].toArray()})
@@ -42,25 +58,39 @@ ElementFactory.screenPrototype	= ElementFactory.elementPrototype.concat({
 	init:	function(screen) {
 		this.screen = screen;
 	},
+	onScreen:	function(func) {
+		func.call(this);
+	},
 });
 
 
 ElementFactory.prototype = {
+	getNewEid:	function() {
+		return ElementFactory.last_eid += (this.type == "screen") ? 1 : -1;
+	},
 	getElementPrototype:	function() {
-		return this.type == "screen" ? ElementFactory.screenPrototype : ElementFactory.workerPrototype;
+		return this.type == "screen" ? ElementFactory.screenPrototype : ElementFactory.worldPrototype;
 	},
 	createElement:	function() {
-		var args        = [];
-		var my_args     = [];
+		var eid;
+		var args        = [null];
 		var type        = arguments[0];
-		args[0]         = null;
-		for(var i = 2; i < arguments.length; i++) {
-			args.push(arguments[i]);
-			my_args.push(arguments[i]);
+		var skip	= 1;
+		if(type.constructor != Function) {
+			eid = type;
+			type = arguments[1];
+			skip++;
 		}
+		for(var i = 1 + skip; i < arguments.length; i++)
+			args.push(arguments[i]);
+
+		var old_prototype = type.prototype;
+		type.prototype = this.getElementPrototype().concat(old_prototype);
 		var new_element = new (Function.prototype.bind.apply(type, args));
+		new_element.eid = eid ? eid : this.getNewEid();
 		new_element.factory = this;
-		new_element.init(my_args);
+		args.shift();
+		new_element.init(args);
 		return new_element;
 	},
 };
@@ -132,10 +162,13 @@ Point.prototype = {
 };
 
 function CalcRectangle(min_x, max_x, min_y, max_y) {
-	this.points = [];
-	this.points.push(new Point(min_x, min_y));
-	this.points.push(new Point(min_x, max_y));
-	this.points.push(new Point(max_x, max_y));
-	this.points.push(new Point(max_x, min_y));
+	this.onWorld(function() {
+		this.points = [];
+		this.points.push(new Point(min_x, min_y));
+		this.points.push(new Point(min_x, max_y));
+		this.points.push(new Point(max_x, max_y));
+		this.points.push(new Point(max_x, min_y));
+	});
 }
 
+CalcRectangle.prototype = {};
