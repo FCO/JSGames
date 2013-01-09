@@ -9,7 +9,7 @@ function Screen(container, pars) {
 	this.elements	= [];
 	for(var attr in pars)
 		this.canvas.setAttribute(attr, pars[attr]);
-	this.worker		= new Worker("Worker.js");
+	this.worker		= new Worker("Worker.js" + "?" + Math.random());
 	var _this 		= this;
 	this.worker.onmessage	= function(event){
 		var msg = event.data;
@@ -22,6 +22,12 @@ function Screen(container, pars) {
 }
 
 Screen.prototype = {
+	createAudioQueue:	function(url, map, size){
+		this.audioQueue = new AudioQueue(url, map, size);
+	},
+	play:	function(track) {
+		this.audioQueue.play(track);
+	},
 	log:	function(msg){console.log(msg);},
 	draw:	function(element) {
 		this.log("screen.draw: " + element);
@@ -70,24 +76,36 @@ Screen.prototype = {
 		this.sendCmd("callDraw");
 	},
 	createElement:	function() {
-		var tmp = this.createGenericElement();
-		var args = [tmp.eid];
+	//	var tmp = this.createGenericElement();
+	//	var args = [tmp.eid];
+	//	for(var i = 0; i < arguments.length; i++)
+	//		args.push(arguments[i]);
+	//	this.sendCmd("createElement", args);
+	//	return tmp;
+	//},
+	//createGenericElement:	function() {
+	//	var new_element = new ScreenGenericElement(eid);
+	//	new_element.__screen = this;
+	//	this.elements_by_id[eid] = new_element;
+	//	this.lastElement = new_element;
+	//	new_element.__sendUpdate();
+		var generic = this.createGenericElement();
+		var args = [generic.eid];
 		for(var i = 0; i < arguments.length; i++)
 			args.push(arguments[i]);
 		this.sendCmd("createElement", args);
-		return tmp;
+		return generic;
 	},
 	createGenericElement:	function() {
-		var new_element = new ScreenGenericElement(eid);
+		var new_element = new ScreenGenericElement();
 		new_element.__screen = this;
-		this.elements_by_id[eid] = new_element;
-		this.lastElement = new_element;
-		new_element.__sendUpdate();
+		this.elements_by_id[new_element.eid] = new_element;
 		return new_element;
 	},
 	updateGenericElement:	function(eid, data) {
 		this.log("eid: " + eid);
-		this.elements_by_id[eid].__update_data(data);
+		if(this.elements_by_id[eid])
+			this.elements_by_id[eid].__update_data(data);
 	},
 	getLastElement:	function() {
 		var tmp = this.lastElement;
@@ -101,7 +119,11 @@ Screen.prototype = {
 	},
 };
 
+<<<<<<< HEAD
 function ScreenGenericElement(eid) {
+=======
+function ScreenGenericElement() {
+>>>>>>> a8ec6838ea172eb5aeed5092efe1423f2d349dd9
 	this.eid = ScreenGenericElement.last_eid++;
 }
 
@@ -110,11 +132,12 @@ ScreenGenericElement.last_eid = 0;
 ScreenGenericElement.prototype = {
 	__sendCmd: function(cmd, pars) {
 		if(!this.__screen) throw "First, please set '__screen'.";
+		pars.unshift(this.eid);
 		this.__screen.sendCmd(cmd, pars);
 	},
 	__real_values:	{},
 	__sendUpdate:	function() {
-		this.__sendCmd("element", [this.eid, {sendUpdate: []}]);
+		this.__sendCmd("element", [{sendUpdate: []}]);
 	},
 	__update_data:	function(data) {
 		this.__screen.log("update_data()");
@@ -129,7 +152,7 @@ ScreenGenericElement.prototype = {
 					var name = key;
 					var val = {};
 					val[name] = [value];
-					this.__sendCmd("element", [this.eid, val]);
+					this.__sendCmd("element", [val]);
 				});
 			} else {
 				this[key] = function() {
@@ -140,9 +163,61 @@ ScreenGenericElement.prototype = {
 					var val = {};
 					console.log(args);
 					val[name] = args;
-					this.__sendCmd("element", [this.eid, val]);
+					this.__sendCmd("element", [val]);
 				}
 			}
 		}
+	},
+};
+
+function AudioQueue(url, map, max) {
+	this.max		= !!max ? max : 10;
+	this.url		= url;
+	this.samples		= map;
+	this.onloadeddata	= function(){};
+	this.onloadedsingledata	= function(){};
+	this.createQueue();
+}
+
+AudioQueue.get_instance = function() {
+	if(!AudioQueue.instance)
+		AudioQueue.instance = new AudioQueue();
+	return AudioQueue.instance;
+}
+
+AudioQueue.prototype = {
+	loadevents: 0,
+	setSamplesTable:	function(table) {
+		this.samples = table;
+	},
+	play:		function(name) {
+		var audio = this.getAudio();
+		audio.currentTime = this.samples[name].start;
+		audio.setAttribute("endAt", this.samples[name].end);
+		audio.play();
+	},
+	createQueue:	function() {
+		this.queue = [];
+		for(var i = 0; i < this.max; i++) {
+			var tmp = this.createAudio();
+			this.queue.push(tmp);
+		}
+	},
+	createAudio:	function() {
+		var tmp = new Audio;
+		tmp.setAttribute("autoload", true);
+		tmp.setAttribute("src", this.url);
+		tmp.load();
+		tmp.addEventListener('timeupdate', function() {
+			if(this.currentTime >= this.getAttribute("endAt"))
+				this.pause();
+		});
+		return tmp;
+	},
+	getAudio:	function() {
+		var actual = this.queue.shift();
+		this.queue.push(actual);
+		actual.pause();
+		return actual;
 	},
 };
