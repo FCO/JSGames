@@ -84,7 +84,7 @@ ElementFactory.prototype = {
 			this.sendCmd("setField", field, value);
 		},
 		setField:		function(field, value) {
-			this[field] = value;
+			this.__real_values[field] = value;
 		},
 	},
 	__real_values:	{},
