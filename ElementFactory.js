@@ -40,7 +40,7 @@ ElementFactory.elementPrototype = {
 	},
 	move:	function() {
 		throw "Please, implement the 'move' method.";
-	}
+	},
 };
 
 ElementFactory.worldPrototype	= ElementFactory.elementPrototype.concat({
@@ -70,6 +70,31 @@ ElementFactory.screenPrototype	= ElementFactory.elementPrototype.concat({
 
 
 ElementFactory.prototype = {
+	metaFunctions:	{
+		createAttribute:	function(name) {
+			this.__defineGetter__(name, function() {
+				return this.__real_values[name];
+			});
+			this.__defineSetter__(name, function(value) {
+				this.__real_values[name] = value;
+				this.meta("updateField", name, value);
+			});
+		},
+		updateField:		function(field, value) {
+			this.sendCmd("setField", field, value);
+		},
+		setField:		function(field, value) {
+			this[field] = value;
+		},
+	},
+	__real_values:	{},
+	meta:	function() {
+		var args = [];
+		for(var i = 0; i < arguments.length; i++)
+			args.push(arguments[i]);
+		var func = args.shift();
+		this.metaFunctions[func].apply(args);
+	},
 	getNewEid:	function() {
 		return ElementFactory.last_eid += (this.type == "screen") ? 1 : -1;
 	},
