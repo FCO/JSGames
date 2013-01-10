@@ -1,8 +1,11 @@
+function log(msg){window.console.log(msg)};
+
 function ElementFactory(type) {
 	if(type != "screen" && type != "world")
 		throw "The ElementFactory type must be 'screen' or 'world'.";
 	this.type = type;
-	this[type] = eval(type);
+	//this[type] = eval(type);
+	this[type] = {};
 }
 
 ElementFactory.last_eid = 0;
@@ -10,25 +13,26 @@ ElementFactory.last_eid = 0;
 ElementFactory.elementPrototype = {
 	eid:	0,
 	init:	function() {
-		this[this.type]	= this.factory[type];
+		this[this.type]	= this.factory[this.factory.type];
 		this.center	= new Point(0, 0);
 		if(this.postInit) this.postInit(arguments);
 	},
 	sendCmd:	function(cmd, attrs) {
-		this[this.type].sendCmd(cmd, attr);
+		//this[this.type].sendCmd(cmd, attrs);
 	},
-	concat:	function(prototype) {
+	concat:	function() {
 		var clone = {};
-		if(!prototype)
-			prototype = {};
 		for(var key in this) {
 			if(this.hasOwnProperty(key)) {
 				clone[key] = this[key];
 			}
 		}
-		for(var key in prototype) {
-			if(prototype.hasOwnProperty(key)) {
-				clone[key] = prototype[key];
+		for(var i = 0; i < arguments.length; i++) {
+			var prototype = arguments[i];
+			for(var key in prototype) {
+				if(prototype.hasOwnProperty(key)) {
+					clone[key] = prototype[key];
+				}
 			}
 		}
 		return clone;
@@ -68,18 +72,43 @@ ElementFactory.screenPrototype	= ElementFactory.elementPrototype.concat({
 	},
 });
 
+MetaClass = {
+	createAttribute:	function(name, pars) {
+		log("Creating attribute: " + name);
+		if(!this.__real_values)
+			this.__real_values = {};
+		var flag_is		= 0;
+		var is			= pars["is"] || "rw";
+		var value_default	= pars["default"];
 
-ElementFactory.prototype = {
-	metaFunctions:	{
-		createAttribute:	function(name) {
+		var r = Math.pow(2, 0);
+		var w = Math.pow(2, 1);
+
+		if(is.match(/r/)) flag_is |= r;
+		if(is.match(/w/)) flag_is |= w;
+		
+		if(flag_is & r)
 			this.__defineGetter__(name, function() {
 				return this.__real_values[name];
 			});
+		if(flag_is & w)
 			this.__defineSetter__(name, function(value) {
 				this.__real_values[name] = value;
 				this.meta("updateField", name, value);
 			});
-		},
+		if(value_default)
+			this.__real_values[name] = value_default;
+	},
+};
+
+ElementFactory.setMetaClass = function(new_class, onset) {
+	for(var key in MetaClass)
+		new_class.prototype[key] = MetaClass[key];
+	onset.call(new_class.prototype);
+};
+
+ElementFactory.prototype = {
+	metaFunctions:	{
 		updateField:		function(field, value) {
 			this.sendCmd("setField", field, value);
 		},
@@ -105,7 +134,7 @@ ElementFactory.prototype = {
 		var eid;
 		var args        = [null];
 		var type        = arguments[0];
-		var skip	= 1;
+		var skip	= 0;
 		if(type.constructor != Function) {
 			eid = type;
 			type = arguments[1];
@@ -120,7 +149,7 @@ ElementFactory.prototype = {
 		new_element.eid = eid ? eid : this.getNewEid();
 		new_element.factory = this;
 		args.shift();
-		new_element.init(this[this.type]);
+		new_element.init(arguments);
 		return new_element;
 	},
 };
@@ -194,6 +223,10 @@ Point.prototype = {
 function CalcRectangle(min_x, max_x, min_y, max_y) {
 	this.onWorld(function() {
 		this.points = [];
+		this.UL = new Point(min_x, min_y);
+		this.UR = new Point(min_x, max_y);
+		this.DR = new Point(max_x, max_y);
+		this.DL = new Point(max_x, min_y);
 		this.points.push(new Point(min_x, min_y));
 		this.points.push(new Point(min_x, max_y));
 		this.points.push(new Point(max_x, max_y));
@@ -201,4 +234,11 @@ function CalcRectangle(min_x, max_x, min_y, max_y) {
 	});
 }
 
-CalcRectangle.prototype = {};
+ElementFactory.setMetaClass(CalcRectangle, function(){
+	this.createAttribute("UR", {is: "rw", default: new Point(0, 0)});
+	this.createAttribute("UL", {is: "rw", default: new Point(0, 0)});
+	this.createAttribute("DR", {is: "rw", default: new Point(0, 0)});
+	this.createAttribute("DL", {is: "rw", default: new Point(0, 0)});
+});
+
+//CalcRectangle.prototype = {};
