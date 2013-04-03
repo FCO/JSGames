@@ -16,6 +16,7 @@ ElementFactory.elementPrototype = {
 		this[this.type]	= this.factory[this.factory.type];
 		this.center	= new Point(0, 0);
 		if(this.postInit) this.postInit(arguments);
+		if(this.afterInit) this.afterInit(arguments);
 	},
 	sendCmd:	function(cmd, attrs) {
 		//this[this.type].sendCmd(cmd, attrs);
@@ -99,9 +100,23 @@ MetaClass = {
 		if(value_default)
 			this.__real_values[name] = value_default;
 	},
+	createMethod:	function(name, func) {
+		log(this);
+		this.afterInit = function() {
+			this.onWorld(function(){
+				this[name] = func;
+			});
+			this.onScreen(function(){
+				this[name] = function() {
+					this.sendCmd(name, arguments);
+				};
+			});
+		};
+	}
 };
 
-ElementFactory.setMetaClass = function(new_class, onset) {
+ElementFactory.setMetaClass = function(new_class, prototype, onset) {
+	new_class.prototype = prototype;
 	for(var key in MetaClass)
 		new_class.prototype[key] = MetaClass[key];
 	onset.call(new_class.prototype);
@@ -222,23 +237,30 @@ Point.prototype = {
 
 function CalcRectangle(min_x, max_x, min_y, max_y) {
 	this.onWorld(function() {
-		this.points = [];
 		this.UL = new Point(min_x, min_y);
 		this.UR = new Point(min_x, max_y);
 		this.DR = new Point(max_x, max_y);
 		this.DL = new Point(max_x, min_y);
-		this.points.push(new Point(min_x, min_y));
-		this.points.push(new Point(min_x, max_y));
-		this.points.push(new Point(max_x, max_y));
-		this.points.push(new Point(max_x, min_y));
 	});
 }
 
-ElementFactory.setMetaClass(CalcRectangle, function(){
-	this.createAttribute("UR", {is: "rw", default: new Point(0, 0)});
-	this.createAttribute("UL", {is: "rw", default: new Point(0, 0)});
-	this.createAttribute("DR", {is: "rw", default: new Point(0, 0)});
-	this.createAttribute("DL", {is: "rw", default: new Point(0, 0)});
+ElementFactory.setMetaClass(CalcRectangle, {
+	},
+	function(){
+		this.createAttribute("UR", {is: "rw", default: new Point(0, 0)});
+		this.createAttribute("UL", {is: "rw", default: new Point(0, 0)});
+		this.createAttribute("DR", {is: "rw", default: new Point(0, 0)});
+		this.createAttribute("DL", {is: "rw", default: new Point(0, 0)});
+
+		this.createMethod("path", function(){
+			return [
+				{moveTo: this.UL.toArray()},
+				{lineTo: this.UR.toArray()},
+				{lineTo: this.DR.toArray()},
+				{lineTo: this.DL.toArray()},
+				{lineTo: this.UL.toArray()},
+			];
+		}
+	);
 });
 
-//CalcRectangle.prototype = {};
