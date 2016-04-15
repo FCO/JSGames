@@ -17,6 +17,7 @@
       score.y = 10;
       score.set_point_type("block", 1);
       score.set_point_type("ghost", {time: 30000});
+      score.set_point_type("powerup", {time: 30000});
 
       var quad                     = screen.createElement("Poligon");
       //quad.bounce_when_colide_with = ["Border"];
@@ -100,6 +101,7 @@
       var borda4                   = screen.createElement("Border");
       borda4.y                     = screen.height - 5;
       borda4.on_colide_with("ball", function(bola){ bola.destroy(); alert("You lose") });
+      borda4.on_colide_with("PowerUp", function(powerup){ powerup.destroy(); });
 
       var block_counter = 0;
 
@@ -147,9 +149,40 @@
                if(block_counter <= 0) {
                   var _this = this;
                   setTimeout(function(){alert("You Win!"); _this._element_factory.screen.stop = true;}, 100);
-               }
+               } else {
+                  randomPowerUp(this, bola.velocity);
+			   }
             });
          }
+      }
+
+      var randomPowerUp = function (sourceBlock, velocity) {
+        var powerUpPercentage = .1; // 10% of change to receive a power up
+        if(Math.random() <= powerUpPercentage){
+          // TODO: Create a Power Up factory and multiple types of power ups to randomize
+          var powerup = screen.createElement("Poligon");
+          powerup.visible                 = true;
+          powerup.color                   = "4EA132";
+          powerup.draw_colition_area      = false
+          powerup.do_not_colide_with      = ["Block"];
+          powerup.bounce_when_colide_with = ["Border"];
+          powerup.type                    = "PowerUp";
+          powerup.x                       = sourceBlock.x
+          powerup.y                       = sourceBlock.y;
+		  powerup.flutuate                = false;
+		  powerup.velocity                = velocity.clone();
+          powerup.velocity.mod           *= 0.3;
+		  powerup.velocity.ang           *= -1;
+
+          powerup.add_vertice(0, 0);
+          powerup.add_vertice(7, 14);
+          powerup.add_vertice(-7, 14);
+
+		  powerup.on_colide_with("Barra", function() {
+		  	this.destroy();
+			score.add("powerup");
+		  });
+        }
       }
 
       var ghost = screen.createElement("Poligon");
