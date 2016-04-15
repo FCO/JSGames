@@ -448,6 +448,7 @@ Screen.prototype = {
       var screen = this;
       this.ctx.save();
       if(this.color != null) this.ctx.fillStyle = this.color;
+      this.ctx.fillStyle = "white";
       this.ctx.fillRect(0, 0, this.width, this.height);
       this.ctx.restore();
       for(var i = 0; i < this.elements.length; i++) {
