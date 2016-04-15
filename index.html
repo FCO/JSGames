@@ -66,18 +66,23 @@
          bola.started = true;
       };
 
-      var mouseX = screen.width / 2;
+      var coordX = screen.width / 2;
       document.onmousemove = function(e) {
-         mouseX = e.clientX;
+         coordX = e.clientX;
+      };
+      document.onkeydown = function(e) {
+        var delta = 20;
+        if (e.keyCode == 37) {
+          coordX = coordX - delta;
+        } else if (e.keyCode == 39) {
+          coordX = coordX + delta;
+        } else if (e.keyCode == 32) {
+          bola.stopped = false;
+          bola.started = true;
+        }
       };
       setInterval(function(){
-         if(mouseX > (quad.center.x - quad.width / 2)) {
-            quad.velocity.x = mouseX - quad.center.x > 5 ? 5 : mouseX - quad.center.x;
-         } else if(mouseX < (quad.center.x + quad.width / 2)) {
-            quad.velocity.x = quad.center.x - mouseX > 5 ? -5 : -1 * (quad.center.x - mouseX);
-         } else {
-            quad.velocity.x = 0;
-         }
+         quad.velocity.x = (coordX - quad.center.x) * .5;
       }, 10);
 
       Border.draw_colision_area         = true;
