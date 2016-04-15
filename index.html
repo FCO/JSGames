@@ -6,7 +6,7 @@
     <script>
       var screen                   = new Screen(document.body);
       screen.has_gravity(0, 10);
-      screen.color                 = "FFFFFF";
+      screen.color                 = "#FFFFFF";
       screen.width                 = 800;
       screen.height                = 500;
       screen.dom.style.border      = "solid 1px black";
@@ -25,7 +25,7 @@
       quad.solid                   = true;
       //quad.do_not_colide_with      = ["Border"];
       quad.type                    = "Barra";
-      quad.color                   = "000000";
+      quad.color                   = "#000000";
       quad.add_vertice(-25, 0);
       quad.add_vertice(25, 0);
       quad.add_vertice(25, 5);
@@ -87,7 +87,7 @@
       }, 10);
 
       Border.draw_colision_area         = true;
-      Border.color                 = "AAAAAA";
+      Border.color                 = "#AAAAAA";
 
       var borda1                   = screen.createElement("Border");
       borda1.x                     = screen.width - 5;
@@ -128,7 +128,7 @@
             block.solid                   = true;
             block.do_not_colide_with      = ["Border"];
             block.type                    = "Block";
-            block.color                   = "000000";
+            block.color                   = "#000000";
             block.x                       = i + block_size / 2;
             block.y                       = 120 + j * 30;
             block.add_vertice(-13, 0);
@@ -162,7 +162,7 @@
           // TODO: Create a Power Up factory and multiple types of power ups to randomize
           var powerup = screen.createElement("Poligon");
           powerup.visible                 = true;
-          powerup.color                   = "4EA132";
+          powerup.color                   = "#4EA132";
           powerup.draw_colition_area      = false
           powerup.do_not_colide_with      = ["Block"];
           powerup.bounce_when_colide_with = ["Border"];
@@ -187,11 +187,11 @@
 
       var ghost = screen.createElement("Poligon");
       ghost.visible                 = true;
-      ghost.color                   = "888888";
+      ghost.color                   = "#888888";
       ghost.draw_colision_area      = false;
       ghost.do_not_colide_with      = ["Border"];
       ghost.type                    = "Block";
-      ghost.color                   = "888888";
+      ghost.color                   = "#888888";
       ghost.x                       = screen.width / 2;
       ghost.y                       = 40;
       ghost.add_vertice(-13, 0);

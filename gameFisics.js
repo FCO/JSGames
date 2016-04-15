@@ -86,7 +86,7 @@ Velocity.prototype = {
    _y:    0,
    _ang:  null,
    _mod:  null,
-   color: "FF0000",
+   color: "#FF0000",
    set x(value) {
       this._x = value;
       this.set_cart(this.x, this.y);
@@ -157,7 +157,7 @@ function Point(x, y) {
 Point.prototype = {
    x:     0,
    y:     0,
-   color: "FF0000",
+   color: "#FF0000",
    solid: true,
    get vector() {
       return new Velocity(this.x, this.y);
@@ -253,7 +253,7 @@ Poligon.prototype = {
 function Quad() { }
 Quad.prototype = {
    solid:        false,
-   color:        "000000",
+   color:        "#000000",
    Ax:           0,
    Ay:           0,
    Bx:           0,
@@ -342,7 +342,7 @@ function Border() {
 Border.prototype = {
    do_not_colide_with: ["Border"],
    solid:              false,
-   color:              "000000",
+   color:              "#000000",
    set x(value) {
       this._x = value;
       this._y = null;
@@ -405,7 +405,7 @@ function Screen(container) {
 
 Screen.prototype = {
    elements: [],
-   color: "AAAAAA",
+   color: "#AAAAAA",
    set width(size){
       this.dom.width = size;
    },
@@ -682,7 +682,7 @@ Retangle.prototype = {
    Cy:            null,
    Dy:            null,
    solid:         false,
-   color:         "FF0000",
+   color:         "#FF0000",
    //draw_retangle: false,
    get width() {
       return this.Bx - this.Ax
@@ -723,7 +723,7 @@ Arc.prototype = {
       return ret;
    },
    conf: function(hash){},
-   color:  "000000",
+   color:  "#000000",
    radius: 10,
    x:      0,
    y:      0

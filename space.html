@@ -5,13 +5,13 @@
     <script src="./gameFisics.js"></script>
     <script>
       var screen                   = new Screen(document.body);
-      screen.color                 = "000000";
+      screen.color                 = "#000000";
       screen.width                 = 800;
       screen.height                = 500;
       screen.dom.style.border      = "solid 1px black";
 
       var ship                     = screen.createElement("Poligon");
-      ship.color                   = "FFFFFF";
+      ship.color                   = "#FFFFFF";
       ship.solid                   = true;
       ship.circular_space          = true;
       ship.x                       = screen.width / 2;
@@ -40,7 +40,7 @@
 
       var laser                     = screen.createElement("Poligon");
       //laser.visible                 = false;
-      laser.color                   = "FFFF00";
+      laser.color                   = "#FFFF00";
       laser.solid                   = false;
       laser.circular_space          = true;
       laser.x                       = ship.center.x
