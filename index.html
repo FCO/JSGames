@@ -20,7 +20,6 @@
       score.set_point_type("powerup", {time: 30000});
 
       var quad                     = screen.createElement("Poligon");
-      //quad.bounce_when_colide_with = ["Border"];
       //quad.draw_colision_area      = true;
       quad.solid                   = true;
       //quad.do_not_colide_with      = ["Border"];
@@ -69,7 +68,8 @@
 
       var coordX = screen.width / 2;
       document.onmousemove = function(e) {
-         coordX = e.clientX;
+	 if(e.clientX - quad.width / 2 > 0 && e.clientX + quad.width / 2 < screen.width)
+         	coordX = e.clientX;
       };
       document.onkeydown = function(e) {
         var delta = 20;
