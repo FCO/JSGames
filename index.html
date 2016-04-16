@@ -37,34 +37,47 @@
          bola.velocity.mod *= 1.005;
       });
 
-      var bola                     = screen.createElement("Arc");
-      bola.type                    = "ball";
-      bola.flutuate                = false;
-      bola.bounce_when_colide_with = ["Block", "Border"];
-      //bola.draw_colision_area           = true;
-      bola.solid                   = false;
-      bola.radius                  = 5;
-      bola.velocity.ang            = (Math.random() - 0.5);
-      //bola.velocity.ang            = Math.PI / 3 + Math.PI + Math.random();
-      bola.velocity.mod            = +4;
-      bola.x                       = screen.width / 2;
-      bola.y                       = 440;
-      //bola.draw_velocity           = true;
+      function create_ball(quad) {
+	      var bola                     = screen.createElement("Arc");
+	      bola.type                    = "ball";
+	      bola.flutuate                = false;
+	      bola.bounce_when_colide_with = ["Block", "Border"];
+	      //bola.draw_colision_area           = true;
+	      bola.solid                   = false;
+	      bola.radius                  = 5;
+	      bola.velocity.ang            = (Math.random() - 0.5);
+	      //bola.velocity.ang            = Math.PI / 3 + Math.PI + Math.random();
+	      bola.velocity.mod            = +4;
+	      bola.x                       = screen.width / 2;
+	      bola.y                       = 440;
+	      //bola.draw_velocity           = true;
 
-      bola.started = false;
-      bola.stop();
-      quad.on_move = function() {
-         if(!bola.started) {
-            bola.x = this.center.x;
-         }
-      };
+	      bola.started = false;
+	      bola.stop();
+	      quad.on_move = function() {
+		 if(!bola.started) {
+		    bola.x = this.center.x;
+		 }
+	      };
 
-      bola.on_colide_with("block", function(){this.velocity.mod *= 0.99});
+	      bola.on_colide_with("block", function(){this.velocity.mod *= 0.99});
+
+	      return bola;
+      }
+
+      var bola = create_ball(quad);
 
       document.onclick = function() {
          bola.stopped = false;
          bola.started = true;
       };
+
+      var lives = screen.createElement("Lives");
+      lives.lives		= 5;
+      lives.x			= 60;
+      lives.y			= 10;
+      lives.on_death		= function() {bola.destroy(); alert("You died!"); create_ball(quad)};
+      lives.on_finish_lives	= function() {alert("You Lose!!!");};
 
       var coordX = screen.width / 2;
       document.onmousemove = function(e) {
@@ -100,7 +113,7 @@
 
       var borda4                   = screen.createElement("Border");
       borda4.y                     = screen.height - 5;
-      borda4.on_colide_with("ball", function(bola){ bola.destroy(); alert("You lose") });
+      borda4.on_colide_with("ball", function(){lives.died()});
       borda4.on_colide_with("PowerUp", function(powerup){ powerup.destroy(); });
 
       var block_counter = 0;
