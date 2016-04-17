@@ -21,7 +21,7 @@
     "budo": "^8.2.1"
   },
   "scripts": {
-    "build": "mkdir -p build; cp index.html build; browserify brick_breacker.js > build/brick_breacker.js",
-    "watch": "budo brick_breacker.js --open --live --debug"
+    "build": "mkdir -p build; cp index.html build; browserify brick_breaker.js > build/brick_breaker.js",
+    "watch": "budo brick_breaker.js --open --live --debug"
   }
 }
