@@ -1,0 +1,8 @@
+script: bash ./deploy.sh
+env:
+  global:
+  - GH_REF: github.com/FCO/JSGames.git
+  - secure: "dPqtrFiihtCJEwr+RmBup6oaIUuwZ1phxFM2Pv0gbwxc/LFv81DqIXmJvlZxJ4H097zKSxt1e22hsILH8RFOFnj6FYvgAPd46c1HBAl6BC+bwE4pgVhVea55PsTvR7vhc84ZqVY8wjwhbf4bcQK05J7gQ3jGjsRFn+RFokxnO28="
+language: node_js
+node_js:
+- "0.12"
