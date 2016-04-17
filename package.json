@@ -1,0 +1,27 @@
+{
+  "name": "JSGames",
+  "version": "1.0.0",
+  "description": "Framework to create javascript games",
+  "main": "gameFisics.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FCO/JSGames.git"
+  },
+  "author": "Fernando Correa de Oliveira <fco@cpan.org>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FCO/JSGames/issues"
+  },
+  "homepage": "https://github.com/FCO/JSGames",
+  "devDependencies": {
+    "browserify": "^13.0.0",
+    "budo": "^8.2.1"
+  },
+  "scripts": {
+    "build": "browserify brick_breacker.js > build/brick_breacker.js",
+    "watch": "budo brick_breacker.js --open --live --debug"
+  }
+}
