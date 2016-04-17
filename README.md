@@ -8,4 +8,4 @@ http://fco.github.io/JSGames
     npm run watch
 
 ## Deploy
-On master push the travis autobuild and push to gh-pages
+On master push the travis autobuilds and pushes to gh-pages
