@@ -1,7 +1,8 @@
 # JSGames
 Framework to create javascript games
 
-## Sample:
+## Samples:
+### Brick Breaker
 http://fco.github.io/JSGames
 
 ## Test:
