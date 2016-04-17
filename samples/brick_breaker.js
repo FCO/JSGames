@@ -1,4 +1,4 @@
-var Screen = require(".");
+var Screen = require("..");
 var screen                   = new Screen(document.body);
 screen.has_gravity(0, 10);
 screen.color                 = "#FFFFFF";
