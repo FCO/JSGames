@@ -2,8 +2,8 @@
 set -e # exit with nonzero exit code if anything fails
 
 # clear and re-create the out directory
-rm -rf out || exit 0;
-mkdir out;
+rm -rf build || exit 0;
+mkdir build;
 
 # run our compile script
 npm build
