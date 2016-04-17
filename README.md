@@ -5,7 +5,7 @@ Framework to create javascript games
 http://fco.github.io/JSGames
 
 ## Test:
-    npm run watch
+    npm run brickbreaker
 
 ## Deploy
 On master push the travis autobuilds and pushes to gh-pages
