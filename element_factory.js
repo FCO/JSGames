@@ -1,20 +1,24 @@
 module.exports		= ElementFactory;
-var Lives		= require("./lives.js");
-var Score		= require("./score.js");
-var Aceleration		= require("./aceleration.js");
+require("./lives.js");
+require("./score.js");
+require("./aceleration.js");
+require("./velocity.js");
+require("./poligon.js");
+require("./retangle.js");
+require("./quad.js");
+require("./border.js");
+require("./arc.js");
+
+var decamelize		= require("decamelize");
 var Velocity		= require("./velocity.js");
 var Point		= require("./point.js");
-var Poligon		= require("./poligon.js");
-var Retangle		= require("./retangle.js");
-var Quad		= require("./quad.js");
-var Border		= require("./border.js");
-var Arc			= require("./arc.js");
 
 function ElementFactory() { }
 ElementFactory.prototype = {
 	createElement: function(type_class, params) {
-		var eval_code = "new " + type_class + "()";
-		var tmp_obj = eval(eval_code);
+		var file = "./" + decamelize(type_class) + ".js";
+		var Class = require(file);
+		var tmp_obj = new Class(params);
 		tmp_obj._class = type_class;
 		tmp_obj.clone = function() {
 			var clone = this._element_factory.screen.createElement(this._class);

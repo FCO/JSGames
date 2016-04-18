@@ -1,14 +1,6 @@
 module.exports		= Screen;
 var ElementFactory	= require("./element_factory.js");
-var Lives		= require("./lives.js");
-var Score		= require("./score.js");
 var Aceleration		= require("./aceleration.js");
-var Velocity		= require("./velocity.js");
-var Point		= require("./point.js");
-var Poligon		= require("./poligon.js");
-var Retangle		= require("./retangle.js");
-var Quad		= require("./quad.js");
-var Border		= require("./border.js");
 
 function Screen(container) {
 	this.container      = container;
