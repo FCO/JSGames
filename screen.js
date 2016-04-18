@@ -26,13 +26,16 @@ Screen.prototype = {
 	get height(){
 		return this.dom.height;
 	},
-	has_gravity: function(gravity_x, gravity_y) {
+	has_gravity:	function(gravity_x, gravity_y) {
 		this.gravity = new Aceleration(gravity_x, gravity_y);
 	},
-	createElement: function(elementType, hashParams) {
+	add:		function(element) {
+		this.elements.push(element);
+	},
+	createElement:	function(elementType, hashParams) {
 		var tmp_ele = this.eleFact.createElement(elementType, hashParams);
 		tmp_ele.type = elementType;
-		this.elements.push(tmp_ele);
+		this.add(tmp_ele);
 		return tmp_ele;
 	},
 	run: function() {
@@ -132,5 +135,8 @@ Screen.prototype = {
 		for(var i = 0; i < this.elements.length; i++) {
 			if(this.elements[i] === element) this.elements.splice(i, 1);
 		}
+	},
+	clear: function(element) {
+		this.elements = [];
 	},
 };

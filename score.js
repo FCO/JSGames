@@ -45,13 +45,13 @@ ScoreMultiplicator.prototype = {
 		return this.separator + this.value + this.simbol;
 	},
 	calculate: function(val) {
-			   if(this.time < (new Date()).getTime()) {
-				   this.value = this.default_value;
-			   }
-			   return val * this.value;
-		   },
+		if(this.time < (new Date()).getTime()) {
+			this.value = this.default_value;
+		}
+		return val * this.value;
+	},
 	add_for: function(time) {
-			 this.value++;
-			 this.time	 = (new Date()).getTime() + time;
-		 },
+		this.value++;
+		this.time	 = (new Date()).getTime() + time;
+	},
 };

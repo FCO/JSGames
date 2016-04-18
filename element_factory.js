@@ -8,6 +8,7 @@ require("./retangle.js");
 require("./quad.js");
 require("./border.js");
 require("./arc.js");
+require("./levels.js");
 
 var decamelize		= require("decamelize");
 var Velocity		= require("./velocity.js");
@@ -39,7 +40,7 @@ ElementFactory.prototype = {
 		};
 		tmp_obj._element_factory = this;
 		tmp_obj._orig_draw = tmp_obj.draw;
-		var screen  = this.screen;
+		var screen  = tmp_obj.screen = this.screen;
 		var element = tmp_obj;
 		if(tmp_obj.colision_area == null) tmp_obj.colision_area = tmp_obj.retangle_definition;
 		if(tmp_obj._orig_draw != null) {

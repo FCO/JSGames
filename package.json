@@ -4,8 +4,8 @@
   "description": "Framework to create javascript games",
   "main": "index.js",
   "scripts": {
-    "build": "rm -rf build || true; mkdir -p build; cp samples/*.html build; for js in samples/*.js; do browserify -t bulkify $js > $(echo $js | perl -pe 's{^samples}{build}'); done",
-    "brickbreaker": "npm install; cd samples; budo brick_breaker.js --open --live --debug -- -t bulkify"
+    "build": "rm -rf build || true; mkdir -p build; cp samples/*.html build; for js in samples/*.js; do browserify $js > $(echo $js | perl -pe 's{^samples}{build}'); done",
+    "brickbreaker": "npm install; cd samples; budo brick_breaker.js --open --live --debug"
   },
   "repository": {
     "type": "git",
