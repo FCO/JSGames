@@ -10,17 +10,24 @@ screen.dom.style.cursor      = "none";
 var levels	= screen.createElement("Levels");
 levels.x	= screen.width / 2 - 15;
 levels.y	= 10;
-var lives	= screen.createElement("Lives", 5);
-lives.x		= screen.width - 60;
-lives.y		= 10;
-lives.on_death = function() {
-	alert("You died");
-	levels.start();
-};
-lives.on_finish_lives = function() {
-	alert("You lose!");
-	levels.restart_level();
-};
+
+var lives;
+function create_lives() {
+	lives	= screen.createElement("Lives", 5);
+	lives.x		= screen.width - 60;
+	lives.y		= 10;
+	lives.on_death = function() {
+		alert("You died");
+		levels.start();
+	};
+	lives.on_finish_lives = function() {
+		alert("You lose!");
+		create_lives();
+		levels.restart_level();
+	};
+}
+
+create_lives();
 
 var quad = screen.createElement("Poligon");
 var bola = screen.createElement("Arc");
