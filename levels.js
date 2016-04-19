@@ -10,12 +10,19 @@ Levels.prototype = {
 	levels:			null,
 	generic:		function(){},
 	current_level:		-1,
+	starter:		function(){},
 
 	add_level:		function(level) {
 		this.levels.push(level);
 	},
+	add_starter:		function(starter) {
+		this.starter = starter;
+	},
 	add_generic_level:	function(level) {
 		this.generic = level;
+	},
+	start:			function() {
+		this.starter(this.current_level);
 	},
 	run_level:		function(index) {
 		this.clean_level();
@@ -25,6 +32,7 @@ Levels.prototype = {
 		} else {
 			this.levels[index](index);
 		}
+		this.start();
 	},
 	next_level:		function() {
 		this.run_level(this.current_level + 1);

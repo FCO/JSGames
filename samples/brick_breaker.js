@@ -15,26 +15,21 @@ lives.x		= screen.width - 60;
 lives.y		= 10;
 lives.on_death = function() {
 	alert("You died");
-	levels.restart_level();
+	levels.start();
 };
 lives.on_finish_lives = function() {
 	alert("You lose!");
-	screen.clear();
+	levels.restart_level();
 };
 
-levels.add_level(function () {
-	screen.add(levels);
-	screen.add(lives);
+var quad = screen.createElement("Poligon");
+var bola = screen.createElement("Arc");
 
-	var score	= screen.createElement("Score");
-	score.x		= 10;
-	score.y		= 10;
-	score.set_point_type("block", 1);
-	score.set_point_type("ghost", {time: 30000});
-	score.set_point_type("powerup", {time: 30000});
-
-	
-	var quad                     = screen.createElement("Poligon");
+levels.starter = function () {
+	quad.destroy();
+	bola.destroy();
+	screen.add(quad);
+	screen.add(bola);
 	//quad.draw_colision_area      = true;
 	quad.solid                   = true;
 	//quad.do_not_colide_with      = ["Border"];
@@ -52,7 +47,6 @@ levels.add_level(function () {
 		bola.velocity.mod *= 1.005;
 	});
 	
-	var bola                     = screen.createElement("Arc");
 	bola.type                    = "ball";
 	bola.flutuate                = false;
 	bola.bounce_when_colide_with = ["Block", "Border"];
@@ -80,6 +74,20 @@ levels.add_level(function () {
 		bola.stopped = false;
 		bola.started = true;
 	};
+};
+
+levels.add_level(function () {
+	screen.add(levels);
+	screen.add(lives);
+
+	var score	= screen.createElement("Score");
+	score.x		= 10;
+	score.y		= 10;
+	score.set_point_type("block", 1);
+	score.set_point_type("ghost", {time: 30000});
+	score.set_point_type("powerup", {time: 30000});
+
+	
 	
 	var coordX = screen.width / 2;
 	document.onmousemove = function(e) {
