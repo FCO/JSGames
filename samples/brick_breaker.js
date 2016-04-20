@@ -32,6 +32,16 @@ create_lives();
 var quad = screen.createElement("Poligon");
 var bola = screen.createElement("Arc");
 
+require("./brick_breaker_blocks/regularBlock.js");
+
+var blocks = {};
+[
+	"regularBlock"
+].forEach(function(block) {
+	var conf = require("./brick_breaker_blocks/" + block + ".js");
+	blocks[conf.symbol] = conf;
+});
+
 levels.starter = function () {
 	quad.destroy();
 	bola.destroy();
@@ -151,8 +161,7 @@ levels.add_level(function () {
 		var blocks_space     = 5;
 		var r = w - (number_of_blocks * block_size + (number_of_blocks - 1) * blocks_space);
 		for(var i = r / 2; i < w - (r / 2); i += block_size + blocks_space) {
-			var block_conf = require("./brick_breaker_blocks/regularBlock.js");
-			console.log(block_conf);
+			var block_conf = blocks["###"];
 			block_counter++;
 			var block = screen.createElement(block_conf.type);
 			block.randomPowerUp	= randomPowerUp;
