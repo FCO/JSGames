@@ -50,7 +50,7 @@ Blocks.prototype = {
 			block_conf = this.blocks[symbol];
 		} else {
 			block_conf = this.blocks["###"];
-			pars.color = symbol;
+			pars.color = "#" + symbol;
 		}
 		var block = screen.createElement(block_conf.type);
 		block_conf.transformation.call(block, pars);
