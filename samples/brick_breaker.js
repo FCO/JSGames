@@ -120,7 +120,6 @@ levels.add_level(function () {
 	score.x		= 10;
 	score.y		= 10;
 	score.set_point_type("block", 1);
-	score.set_point_type("ghost", {time: 30000});
 	score.set_point_type("powerup", {time: 30000});
 
 	
@@ -246,44 +245,6 @@ levels.add_level(function () {
 			});
 		}
 	}
-	
-	var ghost = screen.createElement("Poligon");
-	ghost.visible                 = true;
-	ghost.color                   = "#888888";
-	ghost.draw_colision_area      = false;
-	ghost.do_not_colide_with      = ["Border"];
-	ghost.type                    = "Block";
-	ghost.color                   = "#888888";
-	ghost.x                       = screen.width / 2;
-	ghost.y                       = 40;
-	ghost.add_vertice(-13, 0);
-	ghost.add_vertice(12, 0);
-	ghost.add_vertice(12, 15);
-	ghost.add_vertice(-13, 15);
-	
-	ghost.going2destroy = going2destroy;
-	
-	ghost.on_colide_with("ball", function(bola) { 
-		clearInterval(this.blink_id);
-		score.add("ghost");
-		this.do_not_colide_with = ["ball"];
-		this.going2destroy();
-		if(block_counter <= 0) {
-			setTimeout(function(){
-				alert("You Win!");
-				this._element_factory.screen.stop = true;
-			}.bind(this), 100);
-		}
-	});
-	
-	ghost.blink_id = setInterval(function(){
-		if(ghost.visible) {
-			ghost.do_not_colide_with      = ["Border", "ball"];
-		} else {
-			ghost.do_not_colide_with      = ["Border"];
-		}
-		ghost.visible = ! ghost.visible;
-	}, 5000);
 });
 
 levels.next_level();
