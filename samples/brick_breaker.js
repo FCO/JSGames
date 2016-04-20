@@ -1,5 +1,6 @@
 var Screen = require("..");
 require("./brick_breaker_blocks/regularBlock.js");
+var fs = require("fs");
 
 var screen                   = new Screen(document.body);
 screen.has_gravity(0, 10);
@@ -172,6 +173,8 @@ levels.add_level(function () {
 		}
 	};
 	
+	var level = fs.readFileSync(__dirname + "/brick_breaker_levels/level1.lvl");
+	console.log(level.toString().match(/\S{3}|\n|\ +/g));
 	for(var j = 0; j < 3; j++) {
 		var w = screen.width;
 		var number_of_blocks = 25;
