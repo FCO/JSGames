@@ -1,4 +1,6 @@
 var Screen = require("..");
+require("./brick_breaker_blocks/regularBlock.js");
+
 var screen                   = new Screen(document.body);
 screen.has_gravity(0, 10);
 screen.color                 = "#FFFFFF";
@@ -32,15 +34,31 @@ create_lives();
 var quad = screen.createElement("Poligon");
 var bola = screen.createElement("Arc");
 
-require("./brick_breaker_blocks/regularBlock.js");
 
-var blocks = {};
-[
-	"regularBlock"
-].forEach(function(block) {
-	var conf = require("./brick_breaker_blocks/" + block + ".js");
-	blocks[conf.symbol] = conf;
-});
+function Blocks(files) {
+	this.blocks = {};
+	files.forEach(function(block) {
+		var conf = require("./brick_breaker_blocks/" + block + ".js");
+		this.blocks[conf.symbol] = conf;
+	}.bind(this));
+
+}
+Blocks.prototype = {
+	get:	function (symbol) {
+		var block_conf, pars = {};
+		if(symbol in this.blocks) {
+			block_conf = this.blocks[symbol];
+		} else {
+			block_conf = this.blocks["###"];
+			pars.color = symbol;
+		}
+		var block = screen.createElement(block_conf.type);
+		block_conf.transformation.call(block, pars);
+		return block;
+	}
+};
+
+var blocks = new Blocks(["regularBlock"]);
 
 levels.starter = function () {
 	quad.destroy();
@@ -161,9 +179,8 @@ levels.add_level(function () {
 		var blocks_space     = 5;
 		var r = w - (number_of_blocks * block_size + (number_of_blocks - 1) * blocks_space);
 		for(var i = r / 2; i < w - (r / 2); i += block_size + blocks_space) {
-			var block_conf = blocks["###"];
 			block_counter++;
-			var block = screen.createElement(block_conf.type);
+			block = blocks.get("0f0");
 			block.randomPowerUp	= randomPowerUp;
 			block.on_destroy	= function() {
 				block_counter--;
@@ -183,7 +200,6 @@ levels.add_level(function () {
 			block.going2destroy	= going2destroy;
 			block.x			= i + block_size / 2;
 			block.y			= 120 + j * 30;
-			block_conf.transformation.call(block);
 		}
 	}
 	
@@ -192,18 +208,18 @@ levels.add_level(function () {
 		if(Math.random() <= powerUpPercentage){
 			// TODO: Create a Power Up factory and multiple types of power ups to randomize
 			var powerup = screen.createElement("Poligon");
-			powerup.visible                 = true;
-			powerup.color                   = "#4EA132";
-			powerup.draw_colition_area      = false
-				powerup.do_not_colide_with      = ["Block"];
-			powerup.bounce_when_colide_with = ["Border"];
-			powerup.type                    = "PowerUp";
-			powerup.x                       = this.x
-			powerup.y                       = this.y;
-			powerup.flutuate                = false;
-			powerup.velocity                = velocity.clone();
-			powerup.velocity.mod           *= 0.3;
-			powerup.velocity.ang           *= -1;
+			powerup.visible			= true;
+			powerup.color			= "#4EA132";
+			powerup.draw_colition_area	= false
+			powerup.do_not_colide_with	= ["Block"];
+			powerup.bounce_when_colide_with	= ["Border"];
+			powerup.type			= "PowerUp";
+			powerup.x			= this.x
+			powerup.y			= this.y;
+			powerup.flutuate		= false;
+			powerup.velocity		= velocity.clone();
+			powerup.velocity.mod		*= 0.3;
+			powerup.velocity.ang		*= -1;
 	
 			powerup.add_vertice(0, 0);
 			powerup.add_vertice(7, 14);

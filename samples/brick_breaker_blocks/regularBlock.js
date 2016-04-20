@@ -1,12 +1,13 @@
 exports.symbol		= "###";
 exports.type		= "Poligon";
 exports.transformation	= function(data) {
-	console.log(this);
+	var color = "#000000";
+	if(data && data.color) color = data.color;
 	this.draw_colision_area      = false;
 	this.solid                   = true;
 	this.do_not_colide_with      = ["Border"];
 	this.type                    = "Block";
-	this.color                   = "#000000";
+	this.color                   = color;
 	this.add_vertice(-13, 0);
 	this.add_vertice(12, 0);
 	this.add_vertice(12, 15);
