@@ -173,39 +173,51 @@ levels.add_level(function () {
 		}
 	};
 	
+	var w = screen.width;
+	var number_of_blocks	= 25;
+	var space_size		= 5;
+	var block_size		= 25;
+	var line_heigth		= 30;
+	var blocks_space	= 5;
+	var initial_i		= 30;
+	var initial_j		= 50;
+	var j			= initial_j;
+	var i			= initial_i;
+
 	var level = fs.readFileSync(__dirname + "/brick_breaker_levels/level1.lvl");
-	console.log(level.toString().match(/\S{3}|\n|\ +/g));
-	for(var j = 0; j < 3; j++) {
-		var w = screen.width;
-		var number_of_blocks = 25;
-		var block_size       = 25;
-		var blocks_space     = 5;
-		var r = w - (number_of_blocks * block_size + (number_of_blocks - 1) * blocks_space);
-		for(var i = r / 2; i < w - (r / 2); i += block_size + blocks_space) {
-			block_counter++;
-			block = blocks.get("0f0");
-			block.randomPowerUp	= randomPowerUp;
-			block.on_destroy	= function() {
-				block_counter--;
-				this.on_colide_with("ball", function(){});
-				this.flutuate = false;
-				this.going2destroy(150);
-				this.velocity = bola.original_velocity.clone();
-				this.velocity.mod *= 0.1;
-				if(this.block_counter <= 0) {
-					setTimeout(function(){
-						alert("You Win!");
-						this._element_factory.screen.stop = true;
-					}.bind(this), 100);
-				}
-			};
-			block.score		= score;
-			block.going2destroy	= going2destroy;
-			block.x			= i + block_size / 2;
-			block.y			= 120 + j * 30;
+	var array = level.toString().match(/\S{3}|\s/g);
+	array.forEach(function(item) {
+		if(item == " ") {
+			i += space_size;
+			return;
+		} else if(item == "\n") {
+			i = initial_i;
+			j += line_heigth;
+			return;
 		}
-	}
-	
+		block_counter++;
+		block = blocks.get(item);
+		block.randomPowerUp	= randomPowerUp;
+		block.on_destroy	= function() {
+			block_counter--;
+			this.on_colide_with("ball", function(){});
+			this.flutuate = false;
+			this.going2destroy(150);
+			this.velocity = bola.original_velocity.clone();
+			this.velocity.mod *= 0.1;
+			if(this.block_counter <= 0) {
+				setTimeout(function(){
+					alert("You Win!");
+					this._element_factory.screen.stop = true;
+				}.bind(this), 100);
+			}
+		};
+		block.score		= score;
+		block.going2destroy	= going2destroy;
+		block.x			= i;
+		block.y			= j;
+		i			+= block_size;
+	});
 	function randomPowerUp(velocity) {
 		var powerUpPercentage = .1; // 10% of change to receive a power up
 		if(Math.random() <= powerUpPercentage){
