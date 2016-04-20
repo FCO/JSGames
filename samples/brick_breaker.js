@@ -151,42 +151,34 @@ levels.add_level(function () {
 		var blocks_space     = 5;
 		var r = w - (number_of_blocks * block_size + (number_of_blocks - 1) * blocks_space);
 		for(var i = r / 2; i < w - (r / 2); i += block_size + blocks_space) {
-			var block                     = screen.createElement("Poligon");
+			var block_conf = require("./brick_breaker_blocks/regularBlock.js");
+			console.log(block_conf);
 			block_counter++;
-			block.draw_colision_area      = false;
-			block.solid                   = true;
-			block.do_not_colide_with      = ["Border"];
-			block.type                    = "Block";
-			block.color                   = "#000000";
-			block.x                       = i + block_size / 2;
-			block.y                       = 120 + j * 30;
-			block.add_vertice(-13, 0);
-			block.add_vertice(12, 0);
-			block.add_vertice(12, 15);
-			block.add_vertice(-13, 15);
-			block.going2destroy = going2destroy;
-			block.on_colide_with("ball", function(bola) { 
-				score.add("block");
+			var block = screen.createElement(block_conf.type);
+			block.randomPowerUp	= randomPowerUp;
+			block.on_destroy	= function() {
 				block_counter--;
-				//this.do_not_colide_with = ["ball"];
 				this.on_colide_with("ball", function(){});
 				this.flutuate = false;
 				this.going2destroy(150);
 				this.velocity = bola.original_velocity.clone();
 				this.velocity.mod *= 0.1;
-				if(block_counter <= 0) {
+				if(this.block_counter <= 0) {
 					setTimeout(function(){
 						alert("You Win!");
 						this._element_factory.screen.stop = true;
 					}.bind(this), 100);
-				} else {
-					randomPowerUp(this, bola.velocity);
 				}
-			});
+			};
+			block.score		= score;
+			block.going2destroy	= going2destroy;
+			block.x			= i + block_size / 2;
+			block.y			= 120 + j * 30;
+			block_conf.transformation.call(block);
 		}
 	}
 	
-	var randomPowerUp = function (sourceBlock, velocity) {
+	function randomPowerUp(velocity) {
 		var powerUpPercentage = .1; // 10% of change to receive a power up
 		if(Math.random() <= powerUpPercentage){
 			// TODO: Create a Power Up factory and multiple types of power ups to randomize
@@ -197,8 +189,8 @@ levels.add_level(function () {
 				powerup.do_not_colide_with      = ["Block"];
 			powerup.bounce_when_colide_with = ["Border"];
 			powerup.type                    = "PowerUp";
-			powerup.x                       = sourceBlock.x
-				powerup.y                       = sourceBlock.y;
+			powerup.x                       = this.x
+			powerup.y                       = this.y;
 			powerup.flutuate                = false;
 			powerup.velocity                = velocity.clone();
 			powerup.velocity.mod           *= 0.3;
