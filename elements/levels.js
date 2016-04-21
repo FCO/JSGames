@@ -9,7 +9,7 @@ Levels.prototype = {
 	separator:		": ",
 	levels:			null,
 	generic:		function(){},
-	current_level:		-1,
+	current_level:		0,
 	starter:		function(){},
 
 	add_level:		function(level) {

@@ -1,6 +1,6 @@
 var Screen = require("..");
-require("./brick_breaker_blocks/regularBlock.js");
-var fs = require("fs");
+require('./brick_breaker_blocks/*.js', {mode: 'expand'});
+var all_levels	= require("./brick_breaker_levels/levels.js");
 
 var screen                   = new Screen(document.body);
 screen.has_gravity(0, 10);
@@ -112,7 +112,7 @@ levels.starter = function () {
 	};
 };
 
-levels.add_level(function () {
+levels.add_generic_level(function (level_number) {
 	screen.add(levels);
 	screen.add(lives);
 
@@ -183,7 +183,7 @@ levels.add_level(function () {
 	var j			= initial_j;
 	var i			= initial_i;
 
-	var level = fs.readFileSync(__dirname + "/brick_breaker_levels/level1.lvl");
+	var level = all_levels["level" + level_number];
 	var array = level.toString().match(/\S{3}|\s/g);
 	array.forEach(function(item) {
 		if(item == " ") {
@@ -204,11 +204,11 @@ levels.add_level(function () {
 			this.going2destroy(150);
 			this.velocity = bola.original_velocity.clone();
 			this.velocity.mod *= 0.1;
-			if(this.block_counter <= 0) {
-				setTimeout(function(){
-					alert("You Win!");
-					this._element_factory.screen.stop = true;
-				}.bind(this), 100);
+			console.log(block_counter + " bricks");
+			if(block_counter <= 0) {
+				alert("You Win!");
+				//this._element_factory.screen.stop = true;
+				levels.next_level();
 			}
 		};
 		block.score		= score;

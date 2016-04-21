@@ -1,6 +1,6 @@
 module.exports		= Screen;
 var ElementFactory	= require("./element_factory.js");
-var Aceleration		= require("./aceleration.js");
+var Aceleration		= require("./elements/aceleration.js");
 
 function Screen(container) {
 	this.container      = container;

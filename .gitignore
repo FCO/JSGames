@@ -1,3 +1,5 @@
 .*.sw[pon]
 build/
 node_modules/
+samples/brick_breaker_requires.js
+*.log

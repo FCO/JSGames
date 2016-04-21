@@ -1,23 +1,14 @@
 module.exports		= ElementFactory;
-require("./lives.js");
-require("./score.js");
-require("./aceleration.js");
-require("./velocity.js");
-require("./poligon.js");
-require("./retangle.js");
-require("./quad.js");
-require("./border.js");
-require("./arc.js");
-require("./levels.js");
+require('./elements/*.js', {mode: 'expand'});
 
 var decamelize		= require("decamelize");
-var Velocity		= require("./velocity.js");
-var Point		= require("./point.js");
+var Velocity		= require("./elements/velocity.js");
+var Point		= require("./elements/point.js");
 
 function ElementFactory() { }
 ElementFactory.prototype = {
 	createElement: function(type_class, params) {
-		var file = "./" + decamelize(type_class) + ".js";
+		var file = "./elements/" + decamelize(type_class) + ".js";
 		var Class = require(file);
 		var tmp_obj = new Class(params);
 		tmp_obj._class = type_class;
