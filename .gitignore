@@ -3,7 +3,7 @@ build/
 node_modules/
 samples/brick_breaker_requires.js
 *.log
-samples/brick_breaker_levels/levels.js
+samples/brickbreaker/levels/levels.js
 
 # IDE files
 .*.sw[pon]

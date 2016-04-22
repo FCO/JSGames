@@ -183,7 +183,7 @@ levels.add_generic_level(function (level_number) {
 	var j			= initial_j;
 	var i			= initial_i;
 
-	var level = all_levels["level" + level_number];
+	var level = all_levels[level_number - 1];
 	var array = level.toString().match(/\S{3}|\s/g);
 	array.forEach(function(item) {
 		if(item == " ") {
