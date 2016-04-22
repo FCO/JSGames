@@ -1,4 +1,4 @@
-var Screen = require("..");
+var Screen = require("../..");
 require('./brick_breaker_blocks/*.js', {mode: 'expand'});
 var all_levels	= require("./brick_breaker_levels/levels.js");
 

@@ -12,7 +12,7 @@ exports.transformation	= function(data) {
 	this.add_vertice(12, 0);
 	this.add_vertice(12, 15);
 	this.add_vertice(-13, 15);
-	this.on_colide_with("ball", function(bola) { 
+	this.on_colide_with("ball", function(bola) {
 		this.score.add("block");
 		this.on_destroy();
 		this.randomPowerUp(bola.velocity);

@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "rm -rf build || true; npm run create_brickbreaker_levels; mkdir -p build; cp samples/*.html build; for js in samples/*.js; do browserify -t brfs $js > $(echo $js | perl -pe 's{^samples}{build}'); done",
-    "brickbreaker": "npm install; npm run create_brickbreaker_levels; cd samples; budo brick_breaker.js --open --live --debug -- -t brfs -t require-globify",
-    "create_brickbreaker_levels": "cd samples/brick_breaker_levels; for level in *.lvl; do echo 'exports.'$(echo $level | cut -d. -f1)\" = require('fs').readFileSync('$PWD/$level');\"; done > levels.js"
+    "brickbreaker": "npm install && npm run brickbreaker:levels && cd samples/brickbreaker && budo brickbreaker.js --open --live --debug -- -t brfs -t require-globify",
+    "brickbreaker:levels": "cd samples/brickbreaker && sh generate_levels.sh"
   },
   "repository": {
     "type": "git",
