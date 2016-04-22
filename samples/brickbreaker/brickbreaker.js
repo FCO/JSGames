@@ -1,6 +1,6 @@
 var Screen = require("../..");
-require('./brick_breaker_blocks/*.js', {mode: 'expand'});
-var all_levels	= require("./brick_breaker_levels/levels.js");
+require('./blocks/*.js', {mode: 'expand'});
+var all_levels	= require("./levels/levels.js");
 
 var screen                   = new Screen(document.body);
 screen.has_gravity(0, 10);
@@ -39,7 +39,7 @@ var bola = screen.createElement("Arc");
 function Blocks(files) {
 	this.blocks = {};
 	files.forEach(function(block) {
-		var conf = require("./brick_breaker_blocks/" + block + ".js");
+		var conf = require("./blocks/" + block + ".js");
 		this.blocks[conf.symbol] = conf;
 	}.bind(this));
 
@@ -59,7 +59,7 @@ Blocks.prototype = {
 	}
 };
 
-var blocks = new Blocks(["regularBlock"]);
+var blocks = new Blocks(["regular_block"]);
 
 levels.starter = function () {
 	quad.destroy();
