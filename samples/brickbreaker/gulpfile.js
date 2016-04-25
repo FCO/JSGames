@@ -9,7 +9,7 @@ var webserver	= require('gulp-webserver');
 gulp.task('default', function() {});
 
 gulp.task('brickbreaker:levels', function() {
-	var levelsPath = 'levels/';
+	var levelsPath = 'samples/brickbreaker/levels/';
 	gulp.src(levelsPath + '*.lvl')
 	.pipe(replace("\n", "\\n"))
 	.pipe(insert.wrap('"', '"'))
