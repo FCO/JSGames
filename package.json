@@ -4,8 +4,8 @@
   "description": "Framework to create javascript games",
   "main": "index.js",
   "scripts": {
-    "build": "rm -rf build || true; npm run create_brickbreaker_levels; mkdir -p build; cp samples/*.html build; for js in samples/*.js; do browserify -t brfs $js > $(echo $js | perl -pe 's{^samples}{build}'); done",
-    "brickbreaker": "npm install && gulp brickbreaker:levels && cd samples/brickbreaker && budo brickbreaker.js --open --live --debug -- -t brfs -t require-globify"
+    "build": "npm install && gulp brickbreaker:build",
+    "brickbreaker": "npm install && gulp brickbreaker"
   },
   "repository": {
     "type": "git",
@@ -21,10 +21,11 @@
     "browserify": "^13.0.0",
     "budo": "^8.2.1",
     "gulp": "^3.9.1",
+    "gulp-browserify2": "0.0.2",
     "gulp-concat": "^2.6.0",
     "gulp-insert": "^0.5.0",
-    "gulp-replace": "^0.5.4",
     "gulp-minify": "^0.0.10",
+    "gulp-replace": "^0.5.4",
     "gulp-util": "^3.0.7"
   },
   "dependencies": {
