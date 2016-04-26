@@ -3,7 +3,7 @@ Framework to create javascript games
 
 ## Samples:
 ### Brick Breaker
-http://fco.github.io/JSGames
+http://fco.github.io/JSGames/brickbreaker
 
 ## Test:
     npm run brickbreaker

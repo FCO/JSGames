@@ -6,9 +6,7 @@ var browserify	= require("gulp-browserify2");
 var inject	= require('gulp-inject');
 var webserver	= require('gulp-webserver');
 
-gulp.task('default', function() {});
-
-gulp.task('brickbreaker:levels', function() {
+gulp.task('levels', function() {
 	var levelsPath = 'levels/';
 	gulp.src(levelsPath + '*.lvl')
 	.pipe(replace("\n", "\\n"))
@@ -18,9 +16,9 @@ gulp.task('brickbreaker:levels', function() {
 	.pipe(gulp.dest(levelsPath));
 });
 
-gulp.task('brickbreaker:build', ["brickbreaker:levels"], function() {
+gulp.task('build', ["levels"], function() {
 	var js = gulp
-		.src("samples/brickbreaker/index.js")
+		.src("index.js")
 		.pipe(browserify({
 			fileName: "brickbreaker.js",
 			transform: [require("brfs"), require("require-globify")],
@@ -32,18 +30,18 @@ gulp.task('brickbreaker:build', ["brickbreaker:levels"], function() {
 	;
 
 	gulp
-		.src("samples/brickbreaker/*.html")
+		.src("*.html")
 		.pipe(gulp.dest("build"))
 		.pipe(inject(js, {relative: true}))
 		.pipe(gulp.dest("build"))
 	;
 });
 
-gulp.task("brickbreaker:watch", ["brickbreaker:build"], function() {
-	gulp.watch(["index.js", "screen.js", "elements/**.js", "samples/brickbreaker/**.js", "samples/brickbreaker/**.lvl", "**.json"], ['brickbreaker:build']);
+gulp.task("watch", ["build"], function() {
+	gulp.watch(["**.js", "**.lvl", "**.json"], ['build']);
 });
 
-gulp.task("brickbreaker", ["brickbreaker:watch"], function() {
+gulp.task("default", ["watch"], function() {
 	gulp
 		.src("build/")
 		.pipe(webserver({
